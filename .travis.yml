@@ -1,0 +1,29 @@
+language: cpp
+
+dist: xenial
+compiler:
+- gcc
+
+linux: &linux
+  os: linux
+  sudo: required
+  language: python
+  python: "3.7"
+
+install:
+  - sudo apt-get update -qq
+  - sudo apt-get install python3-pip -y
+  - sudo apt-get install python3-setuptools -y
+  - sudo python3 -m pip install --upgrade pip
+  - sudo python3 -m pip install conan
+  - conan user
+  - conan --version
+  - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan 
+
+script:
+  - mkdir build
+  - cd build
+  - conan install .. -s compiler.libcxx=libstdc++11 --build=missing
+  - cmake ../
+  - cmake --build . --config Release -- -j10
+  - ctest -C Release

@@ -1,0 +1,32 @@
+version: 1.0.{build}
+
+platform:
+  - x64
+
+environment:
+  PYTHON: "C:\\Python37-x64"
+  PYTHON_VERSION: "3.7.2"
+  PYTHON_ARCH: "64"
+
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      CMAKE_GENERATOR: -G"Visual Studio 14 2015 Win64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      CMAKE_GENERATOR: -G"Visual Studio 15 2017 Win64"
+  
+install:
+  - echo "Downloading conan..."
+  - set PATH=%PATH%;%PYTHON%/Scripts/
+  - python -m pip install --upgrade pip
+  - pip3.exe install conan
+  - conan user # Create the conan data directory
+  - conan --version
+  - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan 
+
+build_script:
+  - mkdir build
+  - cd build
+  - conan install ..
+  - cmake %CMAKE_GENERATOR% ../
+  - cmake --build . --config Release
+  - ctest -C Release

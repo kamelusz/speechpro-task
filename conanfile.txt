@@ -1,0 +1,11 @@
+[requires]
+opencv/3.4.5@conan/stable
+boost/1.69.0@conan/stable
+gtest/1.8.1@bincrafters/stable
+
+[options]
+boost:shared=False
+gtest:shared=False
+
+[generators]
+cmake
